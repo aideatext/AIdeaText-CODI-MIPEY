@@ -1,0 +1,13 @@
+# Credenciales y datos sensibles: NUNCA al repo
+.env
+.env.*
+!.env.example
+cuentasCLABE*
+*CLABE*.txt
+donacion_qr.json
+cafe_qr.png
+qr.png
+*.db
+__pycache__/
+*.pyc
+.venv/
