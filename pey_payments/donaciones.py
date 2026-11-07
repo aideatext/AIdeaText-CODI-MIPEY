@@ -25,7 +25,12 @@ from .router import _bank_account, pey
 
 router = APIRouter()
 QR_FILE = os.getenv("DONATION_QR_FILE", "donacion_qr.json")
-CAFES = {"1 café": 35, "2 cafés": 70, "Desayuno": 150}
+# Nivel 0 de "sesión pendiente" sobre conText
+PRECIO_SESION = float(os.getenv("PRECIO_SESION", "10"))          # MXN por sesión de conText
+CONTEXT_URL = os.getenv("CONTEXT_URL", "https://context.aideatext.ai")
+CONTEXT_REF = os.getenv("CONTEXT_REF", "sesion-pendiente")        # etiqueta ?ref del enlace de canje
+CONTEXT_USO_TOKEN = os.getenv("CONTEXT_USO_TOKEN")                # = USO_TOKEN del servicio conText en Render
+CAFES = {"1 sesión": 10, "5 sesiones": 50, "Un grupo (30)": 300}
 
 
 def load_static_qr() -> dict | None:
@@ -41,7 +46,7 @@ def create_static_qr(force: bool = False) -> dict:
         return qr
     r = pey().create_codi_qr(
         amount=0,                      # monto libre: lo decide el donante
-        concept="Cafe AIdeaText",
+        concept="Sesion pendiente conText",
         expiration=0,                  # sin expiración -> QR permanente
         generate_image=True,
         bank_account_id=_bank_account(),
@@ -62,7 +67,7 @@ def cafe_qr_fijo(body: CafeIn):
     """QR de monto fijo (botones 1 café / 2 cafés), expira en 15 min."""
     try:
         r = pey().create_codi_qr(
-            amount=body.amount, concept="Cafe AIdeaText", expiration=900, generate_image=True,
+            amount=body.amount, concept="Sesion pendiente conText", expiration=900, generate_image=True,
             bank_account_id=_bank_account(),
             metadata={"app": "aideatext", "tipo": "donacion", "nombre": body.nombre or "Anónimo"},
         )
@@ -81,7 +86,7 @@ def cafe_push(body: CafePushIn):
     la solicitud de cobro llega a su app bancaria y solo la aprueba."""
     try:
         r = pey().create_codi_push(
-            amount=body.amount, phone_number=body.telefono, concept="Cafe AIdeaText", expiration=600,
+            amount=body.amount, phone_number=body.telefono, concept="Sesion pendiente conText", expiration=600,
             bank_account_id=_bank_account(),
             metadata={"app": "aideatext", "tipo": "donacion", "nombre": body.nombre or "Anónimo"},
         )
@@ -111,10 +116,31 @@ def _feed() -> list[dict]:
     return sorted(items.values(), key=lambda x: x.get("fecha") or 0, reverse=True)
 
 
+def _sesiones_usadas() -> int | None:
+    """Sesiones de conText abiertas con el enlace de canje (?ref=sesion-pendiente) que llegaron a conversar.
+    conText ya registra el ?ref de cada sesión: no hay que tocar su código, solo leer /api/uso."""
+    if not CONTEXT_USO_TOKEN:
+        return None
+    import httpx
+    try:
+        r = httpx.get(f"{CONTEXT_URL}/api/uso", headers={"Authorization": f"Bearer {CONTEXT_USO_TOKEN}"}, timeout=10)
+        r.raise_for_status()
+        return int(((r.json().get("porRef") or {}).get(CONTEXT_REF) or {}).get("conversaron", 0))
+    except Exception:
+        return None
+
+
 @router.get("/cafe/feed")
 def cafe_feed():
     feed = _feed()
-    return {"total": round(sum(i["amount"] or 0 for i in feed), 2), "cafes": len(feed), "donaciones": feed[:20]}
+    total = round(sum(i["amount"] or 0 for i in feed), 2)
+    return {
+        "total": total, "cafes": len(feed), "donaciones": feed[:20],
+        "precio_sesion": PRECIO_SESION,
+        "sesiones_financiadas": int(total // PRECIO_SESION),
+        "sesiones_usadas": _sesiones_usadas(),
+        "enlace_canje": f"{CONTEXT_URL}/?ref={CONTEXT_REF}",
+    }
 
 
 @router.get("/cafe/qr.png")
@@ -128,7 +154,7 @@ def cafe_qr_png():
 
 
 PAGE = """<!doctype html><html lang="es"><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1"><title>Invítame un café · AIdeaText</title>
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>Sesión pendiente · conText</title>
 <style>
 :root{--bg:#faf7f2;--ink:#2b2118;--muted:#7a6a5c;--acc:#8a4b2a;--card:#fff}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,sans-serif}
@@ -141,15 +167,17 @@ input{padding:8px;border:1px solid #ddd;border-radius:8px;width:60%;margin-botto
 .big{font-size:2rem;font-weight:700;color:var(--acc)} li{list-style:none;padding:6px 0;border-bottom:1px solid #eee}
 ul{padding:0;margin:0;text-align:left} small{color:var(--muted)}
 </style><main>
-<h1>☕ Invítame un café</h1>
-<p>AIdeaText es un tutor de escritura con IA para estudiantes. Si te sirve, apóyalo con lo que quieras,
-sin comisiones, directo desde la app de tu banco con <b>CoDi</b>.</p>
+<h1>☕ Invita una sesión pendiente</h1>
+<p>Como el café pendiente: pagas una sesión de <b>conText</b>, el tutor socrático que dibuja el mapa de tus ideas,
+para un estudiante que no conoces. Él recibe la sesión; tú ves el impacto, nunca su identidad.
+Sin comisiones, desde la app de tu banco con <b>CoDi</b>.</p>
 <div class="card"><b>Monto libre</b><br><img src="/cafe/qr.png" alt="QR CoDi monto libre"><br>
 <small>Escanea con tu app bancaria → CoDi → elige el monto</small></div>
 <div class="card"><b>O elige un monto</b><br><br><input id="n" placeholder="Tu nombre (opcional)">
 <input id="tel" inputmode="numeric" placeholder="¿Estás en tu celular? Tu número (10 dígitos)">
 <div class="row">__BOTONES__</div><div id="fijo"></div></div>
-<div class="card"><div class="big" id="tot">$0</div><small id="cnt">0 cafés</small><ul id="wall"></ul></div>
+<div class="card"><div class="big" id="ses">0</div><small>sesiones pendientes financiadas</small>
+<p id="uso" style="margin:.4rem 0"></p><small id="tot">$0 MXN</small> · <small id="cnt">0 donaciones</small><ul id="wall"></ul></div>
 <script>
 async function fijo(m){const tel=document.getElementById('tel').value.trim(),nombre=document.getElementById('n').value||null;
  const push=/^[0-9]{10}$/.test(tel);
@@ -159,8 +187,10 @@ async function fijo(m){const tel=document.getElementById('tel').value.trim(),nom
   ?`<p>📲 Revisa tu app bancaria: te llegó una solicitud CoDi por $${m} MXN. Solo apruébala.</p>`
   :`<img src="data:image/png;base64,${j.qr_png_base64}"><br><small>$${m} MXN · válido 15 min</small>`}
 async function feed(){const j=await (await fetch('/cafe/feed')).json();
- document.getElementById('tot').textContent='$'+j.total.toFixed(2)+' MXN';document.getElementById('cnt').textContent=j.cafes+' cafés';
- document.getElementById('wall').innerHTML=j.donaciones.map(d=>`<li>☕ ${d.nombre} · $${d.amount} <small>${d.fecha?new Date(d.fecha*1000).toLocaleTimeString():''}</small></li>`).join('')}
+ document.getElementById('tot').textContent='$'+j.total.toFixed(2)+' MXN';document.getElementById('cnt').textContent=j.cafes+' donaciones';
+ document.getElementById('ses').textContent=j.sesiones_financiadas;
+ document.getElementById('uso').textContent=j.sesiones_usadas==null?'':`${j.sesiones_usadas} ya usadas por estudiantes`;
+ document.getElementById('wall').innerHTML=j.donaciones.map(d=>`<li>☕ ${d.nombre} · $${d.amount} = ${Math.floor(d.amount/j.precio_sesion)} sesiones <small>${d.fecha?new Date(d.fecha*1000).toLocaleTimeString():''}</small></li>`).join('')}
 feed();setInterval(feed,4000);
 </script></main></html>"""
 

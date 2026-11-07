@@ -7,6 +7,7 @@ Proyecto: integración de cobros CoDi (vía pey) en AIdeaText. Hackathon DevDay 
 2. `CAFE-CODI.md` — el caso de demo "Invítame un café".
 3. `README.md` — ruta por fases y modelo de cobro.
 4. `docs/PLAN-SESION-PENDIENTE.md` — concepto "sesión pendiente" y niveles 0–4.
+5. `docs/OPERACION-HACKATHON.md` — qué CLABE usar y cómo se conecta con conText (Nivel 0).
 
 ## Estructura
 - `pey_payments/client.py` — cliente de la API pey (`https://api.pey.mx`, Bearer).
