@@ -74,8 +74,22 @@ Mecanismos de distribución más ricos y otros medios de aportación. Se definir
 
 ## Relación con el ecosistema AIdeaText
 
-El fondo y el libro son un **servicio transversal** (`pey_payments` + libro contable) que cualquiera de los servicios de AIdeaText puede consumir:
-cobrar, recibir donaciones, otorgar sesiones o emitir constancias. No duplica lógica en cada servicio.
+El fondo y el libro son un **servicio transversal** (`pey_payments` + libro contable) que consumen los cinco servicios en línea.
+La unidad común es el **crédito de sesión**: cada servicio define cuánto vale una sesión suya y qué señal produce.
+
+| Servicio | Qué es | "Pendiente" que se dona | Señal que produce (subproducto) | Quién paga además |
+|---|---|---|---|---|
+| **conText** · context.aideatext.ai | Tutor socrático; grafo en vivo con origen de cada idea (estudiante / tutor / material) | **Sesión de tutor** (ya tiene modelo de pago por uso) | Proporción de ideas propias en el grafo | Licencia personal o corporativa por uso |
+| **AIdeaText** · aideatext.ai, v61-dev, edu | Escritura y argumentación; huella del argumento como grafo; vista del profesor | **Ciclo de borrador** (borrador → retroalimentación → revisión) | M1 Coherencia Dialógica, M2 Robustez Estructural, cambio entre borradores | Institución (edu) |
+| **AIDesk** · aidesk.aideatext.ai | PDF → Markdown en el navegador, diagnóstico, transcripción y traducción | **Minutos de transcripción/traducción** (hoy 1 minuto gratis) | Ninguna sobre la persona (el audio se borra al entregar) | Usuario por volumen |
+| **concursa** · concursa.aideatext.ai | Tutor que conoce las bases de cada concurso; grafo frente a la rúbrica | **Asesoría de postulación** para quien no puede pagar una consultoría | Ajuste de la propuesta a la rúbrica | Postulante u organización |
+| **SSA** · ssa.aideatext.ai | Simulación social con cientos de agentes (basada en MiroFish) | — (no aplica a donación individual) | — | Institucional; además puede **simular reglas de asignación del fondo** antes de aplicarlas |
+
+Consecuencias de diseño:
+- **Un solo libro, muchos destinos**: el donante elige "fondo general" o un servicio; la asignación siempre pasa por el fondo (anonimato por mezcla).
+- **Constancia de aprendizaje** solo la emiten conText y AIdeaText, que son los que miden proceso; AIDesk y concursa entregan valor sin medir a la persona.
+- **conText es el piloto natural**: ya tiene sesión acotada, pago por uso y borrado total → el Nivel 0–1 se prueba ahí primero.
+- **Un mismo QR CoDi** sirve a todos los servicios; el destino se registra en la metadata de la orden.
 
 ## Lectura para convocatorias e investigación
 
