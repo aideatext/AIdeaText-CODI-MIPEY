@@ -11,3 +11,7 @@ qr.png
 __pycache__/
 *.pyc
 .venv/
+
+# Notas internas (no van a GitHub)
+_interno/
+BITACORA-INTERNA*
