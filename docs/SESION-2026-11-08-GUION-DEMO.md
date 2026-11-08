@@ -45,6 +45,7 @@ flowchart LR
 | Qué | URL |
 |---|---|
 | Donar | https://context.aideatext.ai (botón «Donación») |
+| Aviso de privacidad | https://codi.aideatext.ai/privacidad |
 | Reparto público | https://codi.aideatext.ai/becas · JSON: https://codi.aideatext.ai/becas.json |
 | Estudiante | https://v61-dev.aideatext.ai · detalle: https://codi.aideatext.ai/beca/RES-0001 |
 

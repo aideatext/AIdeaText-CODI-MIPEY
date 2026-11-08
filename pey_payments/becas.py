@@ -15,11 +15,13 @@ Flujo:
 from __future__ import annotations
 
 import os
+from html import escape
 
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import HTMLResponse
 
 from . import store
+from .marco import PRIVACIDAD, pagina
 
 router = APIRouter()
 CICLO = os.getenv("CICLO", "2026-2")
@@ -80,22 +82,30 @@ def becas():
 def becas_html():
     b = becas()
     filas = "".join(
-        f'<tr><td><a href="/beca/{p["seudonimo"]}">{p["seudonimo"]}</a></td><td>{p["institucion"]}</td>'
-        f'<td>${p["mxn_recibidos"]:.4f}</td><td>{p["uso"]}</td></tr>' for p in b["por_estudiante"])
-    return f"""<!doctype html><html lang="es"><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1"><title>Subvención de AIdeaText · ciclo {b['ciclo']}</title>
-<style>body{{font-family:system-ui;background:#faf7f2;color:#2b2118;max-width:720px;margin:auto;padding:24px}}
-table{{width:100%;border-collapse:collapse;background:#fff}} td,th{{padding:8px;border-bottom:1px solid #eee;text-align:left}}
-a{{color:#8a4b2a}} .k{{display:inline-block;margin:0 18px 12px 0}} .k b{{font-size:1.6rem;color:#8a4b2a;display:block}}</style>
+        f'<tr><td><a href="/beca/{escape(p["seudonimo"])}">{escape(p["seudonimo"])}</a></td>'
+        f'<td>{escape(p["institucion"] or "")}</td><td class="num">${p["mxn_recibidos"]:.4f}</td>'
+        f'<td class="num">{p["uso"]}</td></tr>' for p in b["por_estudiante"])
+    cuerpo = f"""
 <h1>Donaciones a AIdeaText · ciclo {b['ciclo']}</h1>
-<p>Las donaciones hechas con CoDi desde el botón «Donación» de <a href="https://context.aideatext.ai">conText</a> se reparten <b>en partes iguales</b> entre todos los estudiantes activos de
-<a href="{V61_URL}">AIdeaText</a>, sin importar cuánto lo usen. Al cierre del ciclo esta tabla muestra quién
-aprovechó más la subvención y quién menos. Solo seudónimos: nadie aquí ve nombres.</p>
-<div><span class="k"><b>${b['total_mxn']:.2f}</b>donado</span><span class="k"><b>{b['beneficiarios']}</b>estudiantes</span>
-<span class="k"><b>${b['mxn_por_estudiante']:.4f}</b>para cada uno</span><span class="k"><b>{b['uso_total']}</b>actividades en el ciclo</span></div>
-<table><tr><th>Estudiante</th><th>Institución</th><th>Subvención</th><th>Uso en el ciclo</th></tr>{filas}</table>
-<p><small>Uso = análisis de texto + turnos con el tutor en AIdeaText durante el ciclo. Se actualiza cada 15 minutos.</small></p>
-<p><a href="https://context.aideatext.ai">← Donar desde conText (botón «Donación»)</a> · <a href="/becas.json">datos en JSON</a></p></html>"""
+<p class="entrada">Estudiantes de distintos estados de México usan AIdeaText gracias a tu donación. Lo que se dona
+con CoDi desde el botón «Donación» de <a href="https://context.aideatext.ai">conText</a> se reparte
+<b>en partes iguales</b> entre todos los estudiantes registrados, sin importar cuánto lo usen.</p>
+<div class="cifras">
+  <div class="cifra acento"><b>${b['total_mxn']:.2f}</b><span>MXN donados</span></div>
+  <div class="cifra"><b>{b['beneficiarios']}</b><span>estudiantes registrados</span></div>
+  <div class="cifra"><b>${b['mxn_por_estudiante']:.4f}</b><span>MXN para cada uno</span></div>
+  <div class="cifra"><b>{b['uso_total']}</b><span>actividades en el ciclo</span></div>
+</div>
+<p><a class="boton" href="https://context.aideatext.ai">Haz una donación desde conText</a></p>
+<h2>Reparto y uso por estudiante</h2>
+<div class="tabla"><table>
+<tr><th>Estudiante (seudónimo)</th><th>Institución</th><th class="num">Subvención</th><th class="num">Uso en el ciclo</th></tr>
+{filas}</table></div>
+<p class="nota">Uso = análisis de texto y turnos con el tutor en AIdeaText durante el ciclo; se actualiza cada 15 minutos.
+La tabla va ordenada por uso: al cierre del ciclo muestra quién aprovechó más la subvención y quién menos.
+Los montos se recalculan con cada donación. <a href="/becas.json">Datos abiertos en JSON</a>.</p>"""
+    return pagina(f"Donaciones a AIdeaText · ciclo {b['ciclo']}", cuerpo, "/becas",
+                  "Reparto en partes iguales de las donaciones CoDi entre estudiantes de AIdeaText")
 
 
 def _uno(seudonimo: str) -> dict:
@@ -116,13 +126,20 @@ def beca_estudiante_json(seudonimo: str):
 @router.get("/beca/{seudonimo}", response_class=HTMLResponse)
 def beca_estudiante(seudonimo: str):
     d = _uno(seudonimo)
-    return f"""<!doctype html><html lang="es"><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1"><title>Tu uso de AIdeaText está subvencionado</title>
-<style>body{{font-family:system-ui;background:#faf7f2;color:#2b2118;max-width:520px;margin:auto;padding:24px}}
-a{{color:#8a4b2a;font-weight:600}} .big{{font-size:2rem;font-weight:700;color:#8a4b2a}}</style>
+    cuerpo = f"""
 <h1>🎁 Tu uso de AIdeaText está subvencionado</h1>
-<p>Personas que no conoces donaron por CoDi para que estudiantes como tú sigan usando AIdeaText.
-Lo donado se reparte por igual entre los {d['beneficiarios']} estudiantes activos. Nadie sabe quién eres.</p>
-<div class="big">${d['mxn_recibidos']:.4f} MXN</div><small>has recibido en el ciclo {d['ciclo']}</small>
-<p>Tu actividad en el ciclo: <b>{d['uso']}</b> (análisis y turnos con el tutor).</p>
-<p><a href="{V61_URL}">Seguir trabajando en AIdeaText →</a></p></html>"""
+<p class="entrada">Personas que no conoces donaron con CoDi para que estudiantes como tú sigan usando AIdeaText.
+Lo donado se reparte por igual entre los {d['beneficiarios']} estudiantes registrados. Nadie sabe quién eres.</p>
+<div class="cifras">
+  <div class="cifra acento"><b>${d['mxn_recibidos']:.4f}</b><span>MXN de subvención · ciclo {d['ciclo']}</span></div>
+  <div class="cifra"><b>{d['uso']}</b><span>tu actividad en el ciclo</span></div>
+</div>
+<p><a class="boton azul" href="{V61_URL}">Seguir trabajando en AIdeaText →</a></p>
+<p class="nota">Tu actividad cuenta análisis y turnos con el tutor. Aquí solo aparece tu seudónimo
+<b>{escape(seudonimo)}</b>. <a href="/becas">Ver el reparto completo</a>.</p>"""
+    return pagina("Tu uso de AIdeaText está subvencionado", cuerpo)
+
+
+@router.get("/privacidad", response_class=HTMLResponse)
+def privacidad():
+    return pagina("Aviso de privacidad", PRIVACIDAD, "/privacidad")

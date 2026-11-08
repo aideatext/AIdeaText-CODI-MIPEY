@@ -3,6 +3,8 @@
 Incluye una página mínima /demo para mostrar los tres flujos (checkout, QR, push) en vivo.
 En AIdeaText real solo se hace app.include_router(payments_router) en el FastAPI existente.
 """
+import os
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -26,6 +28,10 @@ app.add_middleware(CORSMiddleware, allow_origins=["https://v61-dev.aideatext.ai"
 app.include_router(payments_router)
 app.include_router(cafe_router)
 app.include_router(becas_router)
+from fastapi.staticfiles import StaticFiles  # noqa: E402
+
+app.mount("/static", StaticFiles(directory=os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                       "pey_payments", "static")), name="static")
 
 
 @app.get("/")
