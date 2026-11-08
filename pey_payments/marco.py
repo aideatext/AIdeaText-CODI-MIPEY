@@ -23,8 +23,11 @@ a{color:var(--azul)} a:hover{color:var(--azul-hondo)}
 .cabecera,.contenido,.pie{padding-inline:max(clamp(1rem,5vw,2rem),calc((100% - var(--marco))/2))}
 .cabecera{display:flex;align-items:center;gap:1.25rem;padding-block:.85rem .7rem;border-bottom:1px solid var(--borde);flex-wrap:wrap}
 .marca-lockup{display:flex;align-items:center;gap:.7rem}
-.marca{width:clamp(2.9rem,2.2rem + 2.2vw,3.9rem);height:auto}
-.sello{height:clamp(1.6rem,1.3rem + 1vw,2.1rem);width:auto}
+.marca{width:44px;height:44px;flex-shrink:0}
+/* El sello NVIDIA Inception es una placa con su propio fondo y marco: sin borde ni fondo propios,
+   sin deformar (width:auto) y a 36 px de alto junto al logotipo de 44 px, igual que conText. */
+.sello{height:36px;width:auto;flex-shrink:0}
+.aviso-marca{font-size:10px;line-height:1.4;color:rgba(78,90,104,.75);margin-top:1rem}
 .menu{margin-left:auto;display:flex;gap:1rem;flex-wrap:wrap;font-size:.92rem}
 .menu a{text-decoration:none;color:var(--tinta-suave)} .menu a:hover,.menu a.on{color:var(--azul)}
 .contenido{padding-block:2rem 3rem}
@@ -85,6 +88,8 @@ def pagina(titulo: str, cuerpo: str, activo: str = "", descripcion: str = "") ->
   <p>Aquí solo aparecen <b>seudónimos</b> de investigación. Ningún nombre, correo ni texto de estudiantes sale de AIdeaText.
   <a href="/privacidad">Cómo tratamos los datos personales</a>.</p>
   <p>© 2026 AIdeaText · first.contact@aideatext.ai</p>
+  <p class="aviso-marca">© 2026 NVIDIA. NVIDIA, the NVIDIA logo, and NVIDIA Inception are trademarks and/or registered
+  trademarks of NVIDIA Corporation in the U.S. and other countries.</p>
 </footer></body></html>"""
 
 
