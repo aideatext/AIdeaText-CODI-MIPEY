@@ -92,3 +92,9 @@ Después: configurar el webhook de pey a `https://<servicio>/webhooks/pey` y pon
 - El uso por estudiante se mide en v61 (análisis + interacciones con el tutor desde `CICLO_INICIO`, por defecto 2026-08-01) y se copia cada 15 min junto con el seudónimo.
 - Etiqueta en v61 (`f85f438`): "🎁 Tu uso de AIdeaText está subvencionado · Has recibido $X MXN".
 - Estado real: 2 donaciones ($0.01 + $0.05 = $0.06) → $0.01 por cada uno de los 6 estudiantes. `/api/yo` de Ana trae `becas` y `/beca/RES-0001.json` → `subvencionado: true`. No verificado en navegador (no hay navegador en la EC2).
+
+### Concepto final para el concurso (15:10 UTC): **donación**
+- Se dona desde **conText** (https://context.aideatext.ai), botón «Donación» (antes «Invítame un café»). Leyenda: estudiantes de distintos estados de México usan conText y las demás herramientas de AIdeaText gracias a tu donación; se reparte por igual entre los estudiantes registrados. conText `ba118f8`.
+- El QR de conText es el mismo QR permanente `35552d2a9e` que cuenta este servicio (verificado byte a byte).
+- `/cafe` deja de ser parte del recorrido público (sigue existiendo para el muro y pruebas). `https://codi.aideatext.ai/` redirige a `/becas`.
+- Pendiente en Render (conText): `APOYO_PAGINA_URL=https://codi.aideatext.ai/becas` para que el botón «Ver cómo se reparte» aparezca, y redeploy para tomar `ba118f8`.

@@ -87,15 +87,15 @@ def becas_html():
 <style>body{{font-family:system-ui;background:#faf7f2;color:#2b2118;max-width:720px;margin:auto;padding:24px}}
 table{{width:100%;border-collapse:collapse;background:#fff}} td,th{{padding:8px;border-bottom:1px solid #eee;text-align:left}}
 a{{color:#8a4b2a}} .k{{display:inline-block;margin:0 18px 12px 0}} .k b{{font-size:1.6rem;color:#8a4b2a;display:block}}</style>
-<h1>Subvención del uso de AIdeaText · ciclo {b['ciclo']}</h1>
-<p>Lo donado por CoDi se reparte <b>en partes iguales</b> entre todos los estudiantes activos de
+<h1>Donaciones a AIdeaText · ciclo {b['ciclo']}</h1>
+<p>Las donaciones hechas con CoDi desde el botón «Donación» de <a href="https://context.aideatext.ai">conText</a> se reparten <b>en partes iguales</b> entre todos los estudiantes activos de
 <a href="{V61_URL}">AIdeaText</a>, sin importar cuánto lo usen. Al cierre del ciclo esta tabla muestra quién
 aprovechó más la subvención y quién menos. Solo seudónimos: nadie aquí ve nombres.</p>
 <div><span class="k"><b>${b['total_mxn']:.2f}</b>donado</span><span class="k"><b>{b['beneficiarios']}</b>estudiantes</span>
 <span class="k"><b>${b['mxn_por_estudiante']:.4f}</b>para cada uno</span><span class="k"><b>{b['uso_total']}</b>actividades en el ciclo</span></div>
 <table><tr><th>Estudiante</th><th>Institución</th><th>Subvención</th><th>Uso en el ciclo</th></tr>{filas}</table>
 <p><small>Uso = análisis de texto + turnos con el tutor en AIdeaText durante el ciclo. Se actualiza cada 15 minutos.</small></p>
-<p><a href="/cafe">← Donar</a> · <a href="/becas.json">datos en JSON</a></p></html>"""
+<p><a href="https://context.aideatext.ai">← Donar desde conText (botón «Donación»)</a> · <a href="/becas.json">datos en JSON</a></p></html>"""
 
 
 def _uno(seudonimo: str) -> dict:

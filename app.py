@@ -30,7 +30,7 @@ app.include_router(becas_router)
 
 @app.get("/")
 def root():
-    return RedirectResponse("/cafe")
+    return RedirectResponse("/becas")
 
 DEMO = """<!doctype html><html lang="es"><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
