@@ -84,3 +84,4 @@ Después: configurar el webhook de pey a `https://<servicio>/webhooks/pey` y pon
 - v61 `57dac24` (https://github.com/aideatext/AIdeaText-v61): `/api/yo` devuelve `becas: {url, seudonimo}` si existe `AIDEATEXT_BECAS_URL`; `comun.js` pinta en la cabecera del estudiante "🎁 Tu sesión ha sido financiada · Has recibido $X MXN · N de M disponibles" (enlace a `/beca/{seudonimo}`). Solo aparece si recibió al menos 1 sesión.
 - Este repo: `GET /beca/{seudonimo}.json` + CORS para v61-dev y edu.
 - Desplegado: `build-ui.sh` → `v61/ui:57dac24`; `/srv/v61-dev/.env` con `AIDEATEXT_BECAS_URL` (hoy el quick tunnel; cambiar a `https://codi.aideatext.ai` cuando exista y `docker compose up -d api`).
+- 14:45 UTC: **URL fija** `https://codi.aideatext.ai` (túnel `appmm-ec2` → `http://localhost:8000`). `/srv/v61-dev/.env` → `AIDEATEXT_BECAS_URL=https://codi.aideatext.ai`; verificado en `/api/yo` de Ana Ferrer (RES-0001). El quick tunnel queda retirado.
