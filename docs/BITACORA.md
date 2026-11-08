@@ -62,3 +62,7 @@ Después: configurar el webhook de pey a `https://<servicio>/webhooks/pey` y pon
 - `.env` de este repo: `CONTEXT_USO_TOKEN` sigue vacío.
 
 - 05:12 UTC: corregido en Render. `/api/apoyo` → `{"modo":"cafe","pagina":null}`; `/api/apoyo/qr.png` (3028 bytes) es idéntico byte a byte a `cafe_qr.png`. Botón de apoyo operativo en producción.
+
+- 13:45 UTC: **primer pago real** por el QR permanente. pey `01M6XPH4SA1B8TY9V0SD55891E`, `PAID`, $0.01 MXN CODI, `externalMetadata.tipo=donacion`. La respuesta coincide con `pey_payments/client.py` (sin cambios).
+- Para la demo con centavos: `PRECIO_SESION=0.01` en `.env` (local/Render, no en código). Con eso `/cafe` muestra **1 sesión financiada**. Para operación real volver a `10`.
+- Simulación del estudiante: abrir `https://context.aideatext.ai/?ref=sesion-pendiente` (ventana privada) y conversar. conText lo cuenta en `/api/uso` → `porRef.sesion-pendiente.conversaron`; `/cafe` lo muestra como "usadas" en cuanto `CONTEXT_USO_TOKEN` esté en `.env`.
