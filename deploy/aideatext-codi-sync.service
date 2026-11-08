@@ -1,0 +1,7 @@
+[Unit]
+Description=Sincroniza estudiantes activos de v61 al reparto de sesiones pendientes
+[Service]
+Type=oneshot
+User=ubuntu
+WorkingDirectory=/home/ubuntu/AIdeaText-CODI-MIPEY
+ExecStart=/home/ubuntu/AIdeaText-CODI-MIPEY/.venv/bin/python scripts/sincronizar_estudiantes_v61.py

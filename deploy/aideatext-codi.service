@@ -1,0 +1,17 @@
+# Servicio 24x7 de codi.aideatext.ai (Cloudflare Tunnel appmm-ec2 -> http://localhost:8000)
+# Instalar: sudo cp deploy/aideatext-codi.service /etc/systemd/system/ && sudo systemctl enable --now aideatext-codi
+[Unit]
+Description=AIdeaText x pey (CoDi): donaciones y reparto de sesiones pendientes
+After=network-online.target docker.service
+Wants=network-online.target
+
+[Service]
+User=ubuntu
+WorkingDirectory=/home/ubuntu/AIdeaText-CODI-MIPEY
+EnvironmentFile=/home/ubuntu/AIdeaText-CODI-MIPEY/.env
+ExecStart=/home/ubuntu/AIdeaText-CODI-MIPEY/.venv/bin/uvicorn app:app --host 127.0.0.1 --port 8000 --proxy-headers
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
