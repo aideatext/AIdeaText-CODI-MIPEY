@@ -51,3 +51,12 @@ Después: configurar el webhook de pey a `https://<servicio>/webhooks/pey` y pon
 ### Notas operativas
 - Push a GitHub: por HTTPS no hay credenciales en el EC2. Usar SSH: `git push git@github.com:aideatext/<repo>.git HEAD:main`.
 - No hay acceso a Render desde el agente. Con una API key de Render en `.env`, el agente puede configurar variables y desplegar.
+
+## 2026-11-08 · Revisión de producción
+
+- `https://context.aideatext.ai/api/apoyo` responde `"modo":"cafe"`, pero en Render se pegaron mal dos valores:
+  - `APOYO_QR_PNG` tenía el **texto del comando** (`base64 -w0 cafe_qr.png`) y no su salida, así que el QR servido eran 13 bytes de basura.
+  - `APOYO_PAGINA_URL` tenía el marcador literal `https://<servicio-pagos>/cafe`.
+- conText `89bac9c`: ahora valida la firma PNG y rechaza URLs con `<>`. Con un valor mal pegado el botón se oculta en vez de mostrar un QR roto.
+- Corrección: pegar en `APOYO_QR_PNG` el contenido de `cafe_qr.b64` (4040 caracteres, empieza con `iVBORw0KGgo`) y borrar `APOYO_PAGINA_URL` hasta publicar el servicio de pagos.
+- `.env` de este repo: `CONTEXT_USO_TOKEN` sigue vacío.
