@@ -60,3 +60,5 @@ Después: configurar el webhook de pey a `https://<servicio>/webhooks/pey` y pon
 - conText `89bac9c`: ahora valida la firma PNG y rechaza URLs con `<>`. Con un valor mal pegado el botón se oculta en vez de mostrar un QR roto.
 - Corrección: pegar en `APOYO_QR_PNG` el contenido de `cafe_qr.b64` (4040 caracteres, empieza con `iVBORw0KGgo`) y borrar `APOYO_PAGINA_URL` hasta publicar el servicio de pagos.
 - `.env` de este repo: `CONTEXT_USO_TOKEN` sigue vacío.
+
+- 05:12 UTC: corregido en Render. `/api/apoyo` → `{"modo":"cafe","pagina":null}`; `/api/apoyo/qr.png` (3028 bytes) es idéntico byte a byte a `cafe_qr.png`. Botón de apoyo operativo en producción.
