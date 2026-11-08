@@ -15,10 +15,12 @@ from pey_payments.router import router as payments_router  # noqa: E402
 from fastapi.responses import RedirectResponse  # noqa: E402
 
 from pey_payments.donaciones import router as cafe_router  # noqa: E402
+from pey_payments.becas import router as becas_router  # noqa: E402
 
 app = FastAPI(title="AIdeaText x pey (CoDi)")
 app.include_router(payments_router)
 app.include_router(cafe_router)
+app.include_router(becas_router)
 
 
 @app.get("/")

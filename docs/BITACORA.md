@@ -66,3 +66,10 @@ Después: configurar el webhook de pey a `https://<servicio>/webhooks/pey` y pon
 - 13:45 UTC: **primer pago real** por el QR permanente. pey `01M6XPH4SA1B8TY9V0SD55891E`, `PAID`, $0.01 MXN CODI, `externalMetadata.tipo=donacion`. La respuesta coincide con `pey_payments/client.py` (sin cambios).
 - Para la demo con centavos: `PRECIO_SESION=0.01` en `.env` (local/Render, no en código). Con eso `/cafe` muestra **1 sesión financiada**. Para operación real volver a `10`.
 - Simulación del estudiante: abrir `https://context.aideatext.ai/?ref=sesion-pendiente` (ventana privada) y conversar. conText lo cuenta en `/api/uso` → `porRef.sesion-pendiente.conversaron`; `/cafe` lo muestra como "usadas" en cuanto `CONTEXT_USO_TOKEN` esté en `.env`.
+
+## 2026-11-08 · Reparto automático a estudiantes de v61 (Nivel 1, sin tocar conText)
+- `scripts/sincronizar_estudiantes_v61.py` lee de `v61-dev-pg-1` solo `investigacion_id` e institución de los estudiantes activos (6 en dev: RES-0001…0006). Sin nombres ni correos.
+- `pey_payments/becas.py`: cada sesión financiada = 1 código de un solo uso, asignado al estudiante con menos códigos (equitativo y determinista). Se ejecuta cada vez que se consulta `/cafe/feed`.
+- Rutas: `/becas` (reparto), `/beca/{seudonimo}` (pantalla del estudiante), `/canje/{codigo}` (marca usado y redirige a conText con `?ref=sesion-pendiente`; segundo uso → 410).
+- Verificado con el pago real de $0.01: 1 financiada → asignada a RES-0001 → canje 303 → recanje 410.
+- Pendiente: que v61 muestre el enlace `/beca/{investigacion_id}` dentro de la cuenta del estudiante, y publicar este servicio.

@@ -134,11 +134,18 @@ def _sesiones_usadas() -> int | None:
 def cafe_feed():
     feed = _feed()
     total = round(sum(i["amount"] or 0 for i in feed), 2)
+    # round() evita que 0.01 // 0.01 dé 0 por coma flotante
+    financiadas = int(round(total / PRECIO_SESION, 6) // 1)
+    from . import becas
+    becas.repartir(financiadas)
+    reparto = becas.resumen()
     return {
         "total": total, "cafes": len(feed), "donaciones": feed[:20],
         "precio_sesion": PRECIO_SESION,
-        "sesiones_financiadas": int(total // PRECIO_SESION),
+        "sesiones_financiadas": financiadas,
         "sesiones_usadas": _sesiones_usadas(),
+        "beneficiarios": reparto["beneficiarios"], "asignadas": reparto["asignadas"],
+        "canjeadas": reparto["canjeadas"],
         "enlace_canje": f"{CONTEXT_URL}/?ref={CONTEXT_REF}",
     }
 
@@ -189,8 +196,8 @@ async function fijo(m){const tel=document.getElementById('tel').value.trim(),nom
 async function feed(){const j=await (await fetch('/cafe/feed')).json();
  document.getElementById('tot').textContent='$'+j.total.toFixed(2)+' MXN';document.getElementById('cnt').textContent=j.cafes+' donaciones';
  document.getElementById('ses').textContent=j.sesiones_financiadas;
- document.getElementById('uso').textContent=j.sesiones_usadas==null?'':`${j.sesiones_usadas} ya usadas por estudiantes`;
- document.getElementById('wall').innerHTML=j.donaciones.map(d=>`<li>☕ ${d.nombre} · $${d.amount} = ${Math.floor(d.amount/j.precio_sesion)} sesiones <small>${d.fecha?new Date(d.fecha*1000).toLocaleTimeString():''}</small></li>`).join('')}
+ document.getElementById('uso').textContent=`Repartidas automáticamente entre ${j.beneficiarios} estudiantes de AIdeaText · ${j.canjeadas} canjeadas`+(j.sesiones_usadas==null?'':` · ${j.sesiones_usadas} conversaciones en conText`);
+ document.getElementById('wall').innerHTML=j.donaciones.map(d=>`<li>☕ ${d.nombre} · $${d.amount} = ${Math.floor(Math.round(d.amount/j.precio_sesion*1e6)/1e6)} sesiones <small>${d.fecha?new Date(d.fecha*1000).toLocaleTimeString():''}</small></li>`).join('')}
 feed();setInterval(feed,4000);
 </script></main></html>"""
 
