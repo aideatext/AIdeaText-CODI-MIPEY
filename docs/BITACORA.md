@@ -101,3 +101,30 @@ Después: configurar el webhook de pey a `https://<servicio>/webhooks/pey` y pon
 - 15:24 UTC: etiqueta v61 `8da4eec`: "subvencionado con: $X MXN", se refresca cada 20 s. X = total donado ÷ estudiantes activos (consulta directa a pey en cada petición; Cloudflare no cachea: DYNAMIC).
 - 15:38 UTC: identidad visual de aideatext.ai en codi.aideatext.ai (logo, sello NVIDIA Inception, Fraunces + IBM Plex, paleta papel/azul/rojo, pie con enlaces). Nueva página **/privacidad** (aviso LFPDPPP: datos tratados, finalidades, pey/CoDi, ARCO, conservación). Capturas en `docs/capturas/`.
 - 15:45 UTC: logos con las medidas de conText (`Marca.tsx`): AIdeaText 44×44 px, sello NVIDIA Inception 36 px de alto con ancho automático (sin deformar, sin borde ni fondo añadidos; el SVG es idéntico byte a byte al de conText). Aviso de marca de NVIDIA en el pie de todas las páginas, mismo texto que conText.
+
+## 2026-11-08 · Cierre de sesión (20:45 UTC)
+
+### Estado verificado
+- Repos al día (sin cambios pendientes, local = GitHub):
+  - https://github.com/aideatext/AIdeaText-CODI-MIPEY · `main`
+  - https://github.com/aideatext/AIdeaText-v61 · `01e493c` (bitácora `docs/bitacora/2026-11-08-donaciones-codi-en-la-cabecera.md`)
+  - https://github.com/aideatext/conText-HackTheAndes · bitácora `docs/bitacora.md` (entrada 2026-11-08)
+  - https://github.com/aideatext/appmm · `69de6e0` (compose de v61-dev con `AIDEATEXT_BECAS_URL`)
+- Secretos fuera de git: `.env`, `payments.db`, `donacion_qr.json`, `cafe_qr.png/.b64`, `qr.png` (todos ignorados).
+- En marcha 24x7: `aideatext-codi.service` y `aideatext-codi-sync.timer` activos; https://codi.aideatext.ai/becas, https://context.aideatext.ai y https://v61-dev.aideatext.ai responden 200.
+- Render (conText): `USO_TOKEN` y `APOYO_PAGINA_URL=https://codi.aideatext.ai/becas` configurados.
+- Fondos: $0.06 MXN (2 pagos reales) → $0.01 a cada uno de 6 estudiantes.
+
+### Cómo retomar la próxima sesión
+1. Leer, en este orden: `docs/SESION-2026-11-08-GUION-DEMO.md` (qué es y por qué), `docs/DEMO.md` (URLs y operación), esta bitácora.
+2. Comprobar: `systemctl status aideatext-codi` y `curl -s https://codi.aideatext.ai/becas.json`.
+3. Antes de commitear: `.venv/bin/python scripts/test_webhook_local.py` → `OK`.
+4. Cambios en `pey_payments/` → `sudo systemctl restart aideatext-codi`. Cambios en v61 → `build-ui.sh` en `/srv/appmm/despliegues/v61-dev` y `docker compose up -d api` en `/srv/v61-dev`.
+
+### Pendientes para siguientes sesiones
+- Ver la etiqueta de Ana en un navegador real (solo verificada por API).
+- Prueba automática del reparto (`becas.resumen`) y de `/api/yo` con `becas` en v61.
+- Persistir el cierre de cada ciclo (hoy el reparto se calcula en vivo sobre el total de pey; no hay corte por semestre ni histórico) y constancias para donantes.
+- Revisión legal del aviso de privacidad (`/privacidad`), redactado como borrador.
+- Al pasar a operación real: `PRECIO_SESION=10`, padrón desde `v61-prod-pg-1` y `AIDEATEXT_BECAS_URL` en prod.
+- Limpieza de código heredado de "sesión pendiente": `CONTEXT_USO_TOKEN`/`_sesiones_usadas`, `CAFES` y `/cafe` (fuera del recorrido público).

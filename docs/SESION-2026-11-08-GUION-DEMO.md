@@ -69,6 +69,6 @@ flowchart LR
 10. La etiqueta muestra el monto acumulado y sube sola con cada donación.
 
 ## Pendientes conocidos (no bloquean el video)
-- Render (conText): `APOYO_PAGINA_URL=https://codi.aideatext.ai/becas` para mostrar "Ver cómo se reparte" en la ventana de donación. Hoy está vacío (`pagina: null`). Los textos nuevos ya están en producción.
+- ~~Render: `APOYO_PAGINA_URL`~~ hecho: la ventana de donación muestra «Ver cómo se reparte» → `/becas`.
 - La etiqueta de v61 se verificó por API, no en un navegador desde la EC2: confirmarla al grabar.
 - Siguientes niveles: persistir el reparto por ciclo con cierre formal y constancias para donantes (ver `PLAN-SESION-PENDIENTE.md`).
