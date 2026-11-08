@@ -137,15 +137,14 @@ def cafe_feed():
     # round() evita que 0.01 // 0.01 dé 0 por coma flotante
     financiadas = int(round(total / PRECIO_SESION, 6) // 1)
     from . import becas
-    becas.repartir(financiadas)
-    reparto = becas.resumen()
+    reparto = becas.resumen(total)
     return {
         "total": total, "cafes": len(feed), "donaciones": feed[:20],
         "precio_sesion": PRECIO_SESION,
         "sesiones_financiadas": financiadas,
         "sesiones_usadas": _sesiones_usadas(),
-        "beneficiarios": reparto["beneficiarios"], "asignadas": reparto["asignadas"],
-        "canjeadas": reparto["canjeadas"],
+        "beneficiarios": reparto["beneficiarios"], "mxn_por_estudiante": reparto["mxn_por_estudiante"],
+        "uso_total": reparto["uso_total"],
         "enlace_canje": f"{CONTEXT_URL}/?ref={CONTEXT_REF}",
     }
 
@@ -161,7 +160,7 @@ def cafe_qr_png():
 
 
 PAGE = """<!doctype html><html lang="es"><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1"><title>Sesión pendiente · conText</title>
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>Subvenciona AIdeaText a un estudiante</title>
 <style>
 :root{--bg:#faf7f2;--ink:#2b2118;--muted:#7a6a5c;--acc:#8a4b2a;--card:#fff}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,sans-serif}
@@ -174,16 +173,16 @@ input{padding:8px;border:1px solid #ddd;border-radius:8px;width:60%;margin-botto
 .big{font-size:2rem;font-weight:700;color:var(--acc)} li{list-style:none;padding:6px 0;border-bottom:1px solid #eee}
 ul{padding:0;margin:0;text-align:left} small{color:var(--muted)}
 </style><main>
-<h1>☕ Invita una sesión pendiente</h1>
-<p>Como el café pendiente: pagas una sesión de <b>conText</b>, el tutor socrático que dibuja el mapa de tus ideas,
-para un estudiante que no conoces. Él recibe la sesión; tú ves el impacto, nunca su identidad.
-Sin comisiones, desde la app de tu banco con <b>CoDi</b>.</p>
+<h1>☕ Subvenciona AIdeaText a un estudiante</h1>
+<p>Como el café pendiente: tu donación paga el uso de <b>AIdeaText</b> (escritura académica, tutor socrático
+y mapa de ideas) para estudiantes que no conoces. Se reparte <b>en partes iguales</b> entre todos los estudiantes
+activos; tú ves el impacto, nunca su identidad. Sin comisiones, desde la app de tu banco con <b>CoDi</b>.</p>
 <div class="card"><b>Monto libre</b><br><img src="/cafe/qr.png" alt="QR CoDi monto libre"><br>
 <small>Escanea con tu app bancaria → CoDi → elige el monto</small></div>
 <div class="card"><b>O elige un monto</b><br><br><input id="n" placeholder="Tu nombre (opcional)">
 <input id="tel" inputmode="numeric" placeholder="¿Estás en tu celular? Tu número (10 dígitos)">
 <div class="row">__BOTONES__</div><div id="fijo"></div></div>
-<div class="card"><div class="big" id="ses">0</div><small>sesiones pendientes financiadas</small>
+<div class="card"><div class="big" id="ses">0</div><small>sesiones de AIdeaText financiadas</small>
 <p id="uso" style="margin:.4rem 0"></p><small id="tot">$0 MXN</small> · <small id="cnt">0 donaciones</small><ul id="wall"></ul></div>
 <script>
 async function fijo(m){const tel=document.getElementById('tel').value.trim(),nombre=document.getElementById('n').value||null;
@@ -196,7 +195,7 @@ async function fijo(m){const tel=document.getElementById('tel').value.trim(),nom
 async function feed(){const j=await (await fetch('/cafe/feed')).json();
  document.getElementById('tot').textContent='$'+j.total.toFixed(2)+' MXN';document.getElementById('cnt').textContent=j.cafes+' donaciones';
  document.getElementById('ses').textContent=j.sesiones_financiadas;
- document.getElementById('uso').textContent=`Repartidas automáticamente entre ${j.beneficiarios} estudiantes de AIdeaText · ${j.canjeadas} canjeadas`+(j.sesiones_usadas==null?'':` · ${j.sesiones_usadas} conversaciones en conText`);
+ document.getElementById('uso').innerHTML=`Repartido por igual entre <b>${j.beneficiarios}</b> estudiantes de AIdeaText: $${j.mxn_por_estudiante.toFixed(4)} para cada uno · <a href="/becas">ver reparto y uso</a>`;
  document.getElementById('wall').innerHTML=j.donaciones.map(d=>`<li>☕ ${d.nombre} · $${d.amount} = ${Math.floor(Math.round(d.amount/j.precio_sesion*1e6)/1e6)} sesiones <small>${d.fecha?new Date(d.fecha*1000).toLocaleTimeString():''}</small></li>`).join('')}
 feed();setInterval(feed,4000);
 </script></main></html>"""

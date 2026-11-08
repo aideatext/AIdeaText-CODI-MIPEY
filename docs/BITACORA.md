@@ -85,3 +85,10 @@ Después: configurar el webhook de pey a `https://<servicio>/webhooks/pey` y pon
 - Este repo: `GET /beca/{seudonimo}.json` + CORS para v61-dev y edu.
 - Desplegado: `build-ui.sh` → `v61/ui:57dac24`; `/srv/v61-dev/.env` con `AIDEATEXT_BECAS_URL` (hoy el quick tunnel; cambiar a `https://codi.aideatext.ai` cuando exista y `docker compose up -d api`).
 - 14:45 UTC: **URL fija** `https://codi.aideatext.ai` (túnel `appmm-ec2` → `http://localhost:8000`). `/srv/v61-dev/.env` → `AIDEATEXT_BECAS_URL=https://codi.aideatext.ai`; verificado en `/api/yo` de Ana Ferrer (RES-0001). El quick tunnel queda retirado.
+
+### Precisión de Manuel (14:56 UTC): la donación subvenciona AIdeaText, no conText
+- conText ya está integrado en v61-dev. La donación paga el **uso de AIdeaText** (v61) para los estudiantes activos.
+- Se retiraron los códigos de canje y la redirección a conText. Reparto: total donado ÷ estudiantes activos, en partes iguales, sin canje.
+- El uso por estudiante se mide en v61 (análisis + interacciones con el tutor desde `CICLO_INICIO`, por defecto 2026-08-01) y se copia cada 15 min junto con el seudónimo.
+- Etiqueta en v61 (`f85f438`): "🎁 Tu uso de AIdeaText está subvencionado · Has recibido $X MXN".
+- Estado real: 2 donaciones ($0.01 + $0.05 = $0.06) → $0.01 por cada uno de los 6 estudiantes. `/api/yo` de Ana trae `becas` y `/beca/RES-0001.json` → `subvencionado: true`. No verificado en navegador (no hay navegador en la EC2).

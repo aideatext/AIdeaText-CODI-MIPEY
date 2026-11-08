@@ -1,4 +1,4 @@
-# Demo pública 24x7: sesión pendiente con CoDi
+# Demo pública 24x7: subvención del uso de AIdeaText con CoDi
 
 Cualquier persona (jurado, aliados, estudiantes) puede seguir el flujo completo con dinero real, desde la app de su banco.
 
@@ -7,22 +7,21 @@ Cualquier persona (jurado, aliados, estudiantes) puede seguir el flujo completo 
 | Paso | Qué ver | URL |
 |---|---|---|
 | 1. Donar | QR CoDi de monto libre y muro en vivo | https://codi.aideatext.ai/cafe |
-| 2. Reparto | Rondas iguales para todos los estudiantes, uso por estudiante (solo seudónimos) | https://codi.aideatext.ai/becas |
+| 2. Reparto | Lo donado dividido en partes iguales entre los estudiantes activos, y su uso en el ciclo (solo seudónimos) | https://codi.aideatext.ai/becas |
 | 2b. Datos | Lo mismo en JSON | https://codi.aideatext.ai/becas.json |
-| 3. Estudiante | Etiqueta "🎁 Tu sesión ha sido financiada · Has recibido $X MXN" en la cabecera | https://v61-dev.aideatext.ai (cuenta demo `ana.ferrer@alumna.litoral.edu.pe` / `aideatext`) |
-| 3b. Sus sesiones | Botones "Usar esta sesión" (un solo uso) | https://codi.aideatext.ai/beca/RES-0001 |
-| 4. Uso | El tutor socrático donde se gasta la sesión | https://context.aideatext.ai/?ref=sesion-pendiente |
+| 3. Estudiante | Etiqueta "🎁 Tu uso de AIdeaText está subvencionado · Has recibido $X MXN" en la cabecera | https://v61-dev.aideatext.ai (cuenta demo `ana.ferrer@alumna.litoral.edu.pe` / `aideatext`) |
+| 3b. Su subvención | Monto recibido, su actividad y enlace para seguir en AIdeaText | https://codi.aideatext.ai/beca/RES-0001 |
 
 ## Recorrido (5 minutos)
-1. En `/cafe`, escanear el QR con la app del banco (CoDi) y pagar. Con el precio de demo, **$0.01 = 1 sesión**.
-2. Cuando lo donado alcanza una ronda completa (1 sesión por cada estudiante activo, hoy 6 = $0.06), `/becas` muestra la ronda y cada estudiante recibe 1.
-3. Entrar a v61-dev como Ana: aparece la etiqueta verde. Al pulsarla, "Usar esta sesión" abre conText.
-4. Volver a `/becas`: la columna "Usadas" sube. Un código ya usado responde 410 si se intenta otra vez.
+1. En `/cafe`, escanear el QR con la app del banco (CoDi) y pagar cualquier monto.
+2. `/becas` divide al instante el total donado en partes iguales entre todos los estudiantes activos de AIdeaText. Nadie canjea nada: el uso queda subvencionado.
+3. Entrar a v61-dev como Ana: en la cabecera aparece la etiqueta verde con lo recibido. Ana sigue trabajando normalmente (escritura, tutor, conText integrado).
+4. `/becas` muestra el uso de cada estudiante en el ciclo (análisis + turnos con el tutor, actualizado cada 15 min). Al cierre del semestre se ve quién aprovechó más y quién menos.
 
 ## Repositorios
 - Pagos, reparto, `/cafe`, `/becas`: https://github.com/aideatext/AIdeaText-CODI-MIPEY
 - Plataforma de estudiantes (etiqueta en la cabecera): https://github.com/aideatext/AIdeaText-v61
-- conText (sin cambios para el reparto): https://github.com/aideatext/conText-HackTheAndes
+- conText (ya integrado en v61; sin cambios): https://github.com/aideatext/conText-HackTheAndes
 
 ## Operación (EC2)
 - `aideatext-codi.service` (systemd): uvicorn en `127.0.0.1:8000`, `Restart=always`, arranca con la máquina. Plantilla en `deploy/`.
