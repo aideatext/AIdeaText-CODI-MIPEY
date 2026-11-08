@@ -73,3 +73,9 @@ Después: configurar el webhook de pey a `https://<servicio>/webhooks/pey` y pon
 - Rutas: `/becas` (reparto), `/beca/{seudonimo}` (pantalla del estudiante), `/canje/{codigo}` (marca usado y redirige a conText con `?ref=sesion-pendiente`; segundo uso → 410).
 - Verificado con el pago real de $0.01: 1 financiada → asignada a RES-0001 → canje 303 → recanje 410.
 - Pendiente: que v61 muestre el enlace `/beca/{investigacion_id}` dentro de la cuenta del estudiante, y publicar este servicio.
+
+### Criterio de reparto: igualitario por rondas (decidido 14:30 UTC)
+- Cada ronda da 1 sesión a **cada** estudiante activo, sin mirar cuántas tiene ni cuántas usó. Solo se reparten rondas completas; el sobrante queda como saldo.
+- Cada código lleva `ciclo` (`CICLO`, por defecto `2026-2`) y `ronda`. Al cierre del ciclo `/becas` ordena por uso: quién usó más y quién menos.
+- Páginas públicas: `/cafe` (donar), `/becas` (reparto y uso por estudiante, solo seudónimos), `/becas.json`, `/beca/{seudonimo}`, `/canje/{codigo}`.
+- Publicado temporalmente con un *quick tunnel* de Cloudflare (la URL cambia si se reinicia). URL fija pendiente: agregar en el panel de Cloudflare el hostname `codi.aideatext.ai` → `http://localhost:8000` al túnel `appmm-ec2`.
