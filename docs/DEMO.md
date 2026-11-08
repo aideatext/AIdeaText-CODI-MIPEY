@@ -9,7 +9,7 @@ Cualquier persona (jurado, aliados, estudiantes) puede seguir el flujo completo 
 | 1. Donar | Botón «Donación» en la cabecera de conText: QR CoDi de monto libre | https://context.aideatext.ai |
 | 2. Reparto | Lo donado dividido en partes iguales entre los estudiantes activos, y su uso en el ciclo (solo seudónimos) | https://codi.aideatext.ai/becas |
 | 2b. Datos | Lo mismo en JSON | https://codi.aideatext.ai/becas.json |
-| 3. Estudiante | Etiqueta "🎁 Tu uso de AIdeaText está subvencionado · Has recibido $X MXN" en la cabecera | https://v61-dev.aideatext.ai (cuenta demo `ana.ferrer@alumna.litoral.edu.pe` / `aideatext`) |
+| 3. Estudiante | Etiqueta "🎁 Tu uso de AIdeaText está subvencionado con: $X MXN" en la cabecera (se actualiza sola cada 20 s) | https://v61-dev.aideatext.ai (cuenta demo `ana.ferrer@alumna.litoral.edu.pe` / `aideatext`) |
 | 3b. Su subvención | Monto recibido, su actividad y enlace para seguir en AIdeaText | https://codi.aideatext.ai/beca/RES-0001 |
 
 ## Recorrido (5 minutos)

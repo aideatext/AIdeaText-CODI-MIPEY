@@ -98,3 +98,4 @@ Después: configurar el webhook de pey a `https://<servicio>/webhooks/pey` y pon
 - El QR de conText es el mismo QR permanente `35552d2a9e` que cuenta este servicio (verificado byte a byte).
 - `/cafe` deja de ser parte del recorrido público (sigue existiendo para el muro y pruebas). `https://codi.aideatext.ai/` redirige a `/becas`.
 - Pendiente en Render (conText): `APOYO_PAGINA_URL=https://codi.aideatext.ai/becas` para que el botón «Ver cómo se reparte» aparezca, y redeploy para tomar `ba118f8`.
+- 15:24 UTC: etiqueta v61 `8da4eec`: "subvencionado con: $X MXN", se refresca cada 20 s. X = total donado ÷ estudiantes activos (consulta directa a pey en cada petición; Cloudflare no cachea: DYNAMIC).
