@@ -134,6 +134,20 @@ Solo seudónimos: nadie aquí ve nombres.</p>
 <p><a href="/cafe">← Donar</a> · <a href="/becas.json">datos en JSON</a></p></html>"""
 
 
+@router.get("/beca/{seudonimo}.json")
+def beca_estudiante_json(seudonimo: str):
+    """Lo que v61 muestra en la cabecera del estudiante. Solo cifras, sin códigos."""
+    from .donaciones import PRECIO_SESION, cafe_feed
+    cafe_feed()  # asegura que el reparto está al día
+    with _conn() as c:
+        if not c.execute("SELECT 1 FROM beneficiarios WHERE seudonimo = ?", (seudonimo,)).fetchone():
+            raise HTTPException(404, "Estudiante no registrado en el reparto")
+        r = c.execute("SELECT COUNT(*) AS recibidas, COUNT(usado) AS usadas FROM codigos "
+                      "WHERE seudonimo = ? AND ciclo = ?", (seudonimo, CICLO)).fetchone()
+    return {"ciclo": CICLO, "recibidas": r["recibidas"], "usadas": r["usadas"],
+            "disponibles": r["recibidas"] - r["usadas"], "mxn_recibidos": round(r["recibidas"] * PRECIO_SESION, 2)}
+
+
 @router.get("/beca/{seudonimo}", response_class=HTMLResponse)
 def beca_estudiante(seudonimo: str):
     with _conn() as c:

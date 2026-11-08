@@ -79,3 +79,8 @@ Después: configurar el webhook de pey a `https://<servicio>/webhooks/pey` y pon
 - Cada código lleva `ciclo` (`CICLO`, por defecto `2026-2`) y `ronda`. Al cierre del ciclo `/becas` ordena por uso: quién usó más y quién menos.
 - Páginas públicas: `/cafe` (donar), `/becas` (reparto y uso por estudiante, solo seudónimos), `/becas.json`, `/beca/{seudonimo}`, `/canje/{codigo}`.
 - Publicado temporalmente con un *quick tunnel* de Cloudflare (la URL cambia si se reinicia). URL fija pendiente: agregar en el panel de Cloudflare el hostname `codi.aideatext.ai` → `http://localhost:8000` al túnel `appmm-ec2`.
+
+### Etiqueta en v61-dev (14:38 UTC)
+- v61 `57dac24` (https://github.com/aideatext/AIdeaText-v61): `/api/yo` devuelve `becas: {url, seudonimo}` si existe `AIDEATEXT_BECAS_URL`; `comun.js` pinta en la cabecera del estudiante "🎁 Tu sesión ha sido financiada · Has recibido $X MXN · N de M disponibles" (enlace a `/beca/{seudonimo}`). Solo aparece si recibió al menos 1 sesión.
+- Este repo: `GET /beca/{seudonimo}.json` + CORS para v61-dev y edu.
+- Desplegado: `build-ui.sh` → `v61/ui:57dac24`; `/srv/v61-dev/.env` con `AIDEATEXT_BECAS_URL` (hoy el quick tunnel; cambiar a `https://codi.aideatext.ai` cuando exista y `docker compose up -d api`).

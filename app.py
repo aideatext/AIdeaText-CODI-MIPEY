@@ -18,6 +18,11 @@ from pey_payments.donaciones import router as cafe_router  # noqa: E402
 from pey_payments.becas import router as becas_router  # noqa: E402
 
 app = FastAPI(title="AIdeaText x pey (CoDi)")
+from fastapi.middleware.cors import CORSMiddleware  # noqa: E402
+
+# v61 lee /beca/{seudonimo}.json desde el navegador del estudiante (solo GET, sin credenciales).
+app.add_middleware(CORSMiddleware, allow_origins=["https://v61-dev.aideatext.ai", "https://edu.aideatext.ai"],
+                   allow_methods=["GET"])
 app.include_router(payments_router)
 app.include_router(cafe_router)
 app.include_router(becas_router)
